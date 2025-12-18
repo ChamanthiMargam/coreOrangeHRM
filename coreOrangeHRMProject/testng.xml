@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <suite name="Suite">
-	<test thread-count="5" name="Smoke Testing">
-
-
+	<test name="Test">
 		<classes>
-			<class name="com.Tests.TestLoginPage" />
+			<class name="com.Tests.TestPIMPage" />
 			
 			<methods>
-         		 <include name="multipleLogin"/>
+				<include name="verifyLoginPage"/>
+         		 <include name="editEmployeeStatusThenVerify"/>
        		</methods>
 
 		</classes>

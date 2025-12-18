@@ -10,24 +10,27 @@ import com.Util.CommonUtils;
 import com.Util.TestNGUtility;
 
 public class TestPIMPage extends BasePage {
-static LoginPage loginPage=new LoginPage();
-static PIMPage pimpage=new PIMPage();
-LogoutPage logout=new LogoutPage();	
 	
-@Test(description="Verify that an employee can be added successfully",enabled=false,priority=0)
+	
+	@Test(description="Verify login page",enabled=true,priority=0)
+	public void verifyLoginPage() throws Exception {
+		LoginPage.login();
+		TestNGUtility.assertTrue(CommonUtils.getElementText(LoginPage.getWelcomePage()), "Welcome selenium");
+		CommonUtils.hardWait(2);
+		CommonUtils.moveToElement(PIMPage.getPim());
+	}
+
+	
+@Test(description="Verify that an employee can be added successfully",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=1)
 	
 	public void addEmployeeThenVerify() throws Exception  {
-	//Log in to the application using the login page method
-		loginPage.login();
-		TestNGUtility.assertTrue(CommonUtils.getElementText(LoginPage.getWelcomePage()),"Welcome selenium");
 		
-		CommonUtils.moveToElement(PIMPage.getPim());
-		CommonUtils.hardWait(2);
-		CommonUtils.clickElement(pimpage.getAddEmployee());
 		
-		CommonUtils.switchToFrame(pimpage.getFrame());
+		CommonUtils.clickElement(PIMPage.getAddEmployee());
+		
+		CommonUtils.switchToFrame(PIMPage.getFrame());
 		CommonUtils.hardWait(2);
-		TestNGUtility.assertTrue(CommonUtils.getElementText(pimpage.getAddEmpText()), "PIM : Add Employee");
+		TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getAddEmpText()), "PIM : Add Employee");
 		CommonUtils.hardWait(2);
 		
 		CommonUtils.enterValue(PIMPage.getLastName(), "Chamanthi", true);
@@ -46,41 +49,116 @@ LogoutPage logout=new LogoutPage();
 		}
 
 
-@Test(description="Verify that the search functionality returns the correct employee",enabled=false,priority=1)
-public void searchEmployee() throws Exception
+@Test(description="Edit employee and then verify",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=2)
+public void editEmployeeThenVerify() throws Exception
 {
-	
-	loginPage.login();
-	
+
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+	CommonUtils.switchToFrame(PIMPage.getFrame());
 	CommonUtils.hardWait(2);
-	CommonUtils.moveToElement(PIMPage.getPim());
-	CommonUtils.clickElement(pimpage.getEmployeeList());
 	
-	CommonUtils.switchToFrame(pimpage.getFrame());
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+	
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Sahasra", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
 	CommonUtils.hardWait(2);
-	TestNGUtility.assertTrue(CommonUtils.getElementText(pimpage.getEmpInfo()), "Employee Information");
-	CommonUtils.searchByList(pimpage.getSearchBy(), "Emp. First Name");
 	
-	CommonUtils.enterValue(pimpage.getSearchFor(), "Sahasra", true);
-	CommonUtils.clickElement(pimpage.getSearch());
+	CommonUtils.clickElement(PIMPage.getSearchedEmployee());
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEditButton());
+	CommonUtils.hardWait(2);
+	
+	CommonUtils.clearWholeText(PIMPage.getMiddleName());
+	CommonUtils.enterValue(PIMPage.getMiddleName(), "DSU", true);
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEditSave());
+	CommonUtils.hardWait(2);
+	
+	CommonUtils.clickElement(PIMPage.getBack());
+	
+	CommonUtils.verifyUpdatedValueInList(PIMPage.getSearchBy(), PIMPage.getSearchFor(), "Sahasra");
 	
 	CommonUtils.switchBackToFrame();
 	CommonUtils.clickElement(LogoutPage.getLogout());
-			
+	
+}
+@Test(description="View employee list",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=3)
+public void viewEmployeeList() throws Exception
+{
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
+	
+}
+
+@Test(description="Search for an employee and then verify",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=4)
+public void searchEmployeeThenVerify() throws Exception {
+
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Dhanush", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
+
+	CommonUtils.getElementText(PIMPage.getSearchedEmployee());
+	
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
+
+}
+
+@Test(description="Delete an employee and then verify",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=5)
+public void deleteEmployeeThenVerify() throws Exception {
+	
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Sahasra", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
+
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getCheckbox());
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getDeleteButton());
+	CommonUtils.hardWait(2);
+	
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getConfirmDeleteButton()),"Successfully Deleted");
+
+	// Verify deletion
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Sahasra", true);
+	CommonUtils.clearWholeText(PIMPage.getSearchFor());
+	CommonUtils.clickElement(PIMPage.getSearch());
+	
+	String noRecordsText = CommonUtils.getElementText(PIMPage.getNoRecordsFound());
+	TestNGUtility.assertTrue(noRecordsText, "No Records Found");
+	
+	
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
+
 }
 
 
-
-@Test(description="Add multiple employees using excel and verify",enabled=true,priority=2)
+@Test(description="Import Employee data",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=6)
 public static void addMultipleEmployeesUsingExcel() throws Exception
 {
 	
-	loginPage.login();
-	TestNGUtility.assertTrue(CommonUtils.getElementText(LoginPage.getWelcomePage()),"Welcome selenium");
-	
-	CommonUtils.hardWait(2);
-	CommonUtils.moveToElement(PIMPage.getPim());
-	CommonUtils.hardWait(2);
 	CommonUtils.clickElement(PIMPage.getAddEmployee());
 	
 	CommonUtils.switchToFrame(PIMPage.getFrame());
@@ -88,15 +166,99 @@ public static void addMultipleEmployeesUsingExcel() throws Exception
 	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getAddEmpText()), "PIM : Add Employee");
 	CommonUtils.hardWait(2);
 	
-	
 	CommonUtils.addMultipleEmployees("AddMultipleEmployees");
 	
 }
 
+@Test(description="Add employee photo and then verify",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=7)
+public void addEmployeePhotoThenVerify() throws Exception {
 
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
 
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Dhanush", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
+
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getSearchedEmployee());
+	CommonUtils.hardWait(2);
+
+	CommonUtils.uploadPhoto("photo");
+
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getEditSave());
+	CommonUtils.hardWait(2);
+
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
 
 }
 
+
+@Test(description="View employee details",dependsOnMethods= {"verifyLoginPage()"},enabled=false,priority=8)
+public void searchEmployee() throws Exception
+{
+	
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+	
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+	
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Chamanthi", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
+	CommonUtils.hardWait(2);
+	
+	CommonUtils.clickElement(PIMPage.getSearchedEmployee());
+	CommonUtils.hardWait(2);
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getPersonalDetails()), "Personal Details");
+	CommonUtils.clickElement(PIMPage.getBack());
+	
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
+			
+}
+
+
+@Test(description="Edit employee status and then verify",dependsOnMethods= {"verifyLoginPage()"},enabled=true,priority=9)
+public void editEmployeeStatusThenVerify() throws Exception
+{
+		
+	CommonUtils.clickElement(PIMPage.getEmployeeList());
+	CommonUtils.switchToFrame(PIMPage.getFrame());
+	CommonUtils.hardWait(2);
+	
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getEmpInfo()), "Employee Information");
+	CommonUtils.searchByList(PIMPage.getSearchBy(), "Emp. First Name");
+	CommonUtils.enterValue(PIMPage.getSearchFor(), "Chamanthi", true);
+	CommonUtils.clickElement(PIMPage.getSearch());
+	CommonUtils.hardWait(2);
+	
+	CommonUtils.clickElement(PIMPage.getSearchedEmployee());
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getJob());
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getJobEdit());
+	
+	CommonUtils.searchByList(PIMPage.getEmpStatus(), "Full Time Permanent");
+	CommonUtils.hardWait(2);
+	CommonUtils.clickElement(PIMPage.getJobSave());
+	CommonUtils.hardWait(2);
+	
+	CommonUtils.clickElement(PIMPage.getBack());
+	CommonUtils.hardWait(2);
+	
+	TestNGUtility.assertTrue(CommonUtils.getElementText(PIMPage.getVerifyEmpStatus()), "Full Time Permanent");
+	CommonUtils.switchBackToFrame();
+	CommonUtils.clickElement(LogoutPage.getLogout());
+	
+}
+}
 
 

@@ -283,6 +283,53 @@ public static void addMultipleEmployees(String sheetname) throws Exception {
 	
 }
 
+public static String getAttributeValue(By by, String value) {
+	try {
+		String attrValue = findElement(by).getAttribute(value);
+		return attrValue;
+	} catch (Exception e) {
+		TestNGUtility.assertFail(e.getMessage());
+	}
+	return null;
+}
+
+public static void verifyUpdatedValueInList(By searchBy, By searchFor, String string) {
+	try {
+		CommonUtils.searchByList(searchBy, string);
+		CommonUtils.enterValue(searchFor, string, true);
+		CommonUtils.clickElement(PIMPage.getSearch());
+		
+		String actualValue=CommonUtils.getElementText(PIMPage.getSearchedEmployee());
+		TestNGUtility.assertTrue(actualValue, string);
+		
+	} catch (Exception e) {
+		TestNGUtility.assertFail(e.getMessage());
+	}
+	
+}
+public static void uploadPhoto(String string) {
+	try {
+            CommonUtils.hardWait(2);
+            CommonUtils.clickElement(PIMPage.getClickOnPhoto());
+            
+            if(PIMPage.getCurrentImage() != null) 
+    		{
+            CommonUtils.clickElement(PIMPage.getChoosePhoto());
+		
+            String autoitFilePath=config.getProperty("autoitpath");
+            String uploadfile=autoitFilePath+string+".exe";
+            Runtime.getRuntime().exec(uploadfile);
+		}else {
+			System.out.println("Photo is already uploaded");
+		}
+		
+	} catch (Exception e) {
+		TestNGUtility.assertFail(e.getMessage());
+	}
+	
+}
+
+
 
 
 

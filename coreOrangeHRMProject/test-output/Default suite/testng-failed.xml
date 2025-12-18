@@ -6,8 +6,9 @@
       <class name="com.Tests.TestPIMPage">
         <methods>
           <include name="setup"/>
-          <include name="addMultipleEmployeesUsingExcel"/>
+          <include name="verifyLoginPage"/>
           <include name="close"/>
+          <include name="editEmployeeStatusThenVerify"/>
         </methods>
       </class> <!-- com.Tests.TestPIMPage -->
     </classes>

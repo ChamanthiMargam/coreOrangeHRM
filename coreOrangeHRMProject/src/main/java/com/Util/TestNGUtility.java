@@ -21,4 +21,16 @@ public static void assertTrue(String actual,String expected) {
 
 		Assert.fail(logMessage);
 	}
+	
+	
+	public static void assertEquals(String value, String updatedvalue, String printmessage) {
+		try {
+			Assert.assertEquals(value, updatedvalue);
+			System.out.println(printmessage);
+		} catch (AssertionError e) {
+			Assert.fail("Assertion failed: " + e.getMessage());
+		}
+		
+		
+	}
 }

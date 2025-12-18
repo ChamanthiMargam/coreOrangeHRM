@@ -17,10 +17,10 @@ public static Properties properties;
 	private final static By by_welcomepage=By.xpath("//*[@id=\"option-menu\"]/li[1]");
 	
 	
-	public void login()
+	public static void login()
 	{
 		try {
-			
+			CommonUtils.hardWait(2);
 			CommonUtils.enterValue(getUsername(), "selenium", true);
 			CommonUtils.enterValue(getPassword(), "selenium", true);
 			CommonUtils.clickElement(getSignIn());
